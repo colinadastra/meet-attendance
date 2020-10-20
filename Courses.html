@@ -1,0 +1,38 @@
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+</head>
+
+<body><p id="main">Choose from the following active courses you teach in Google Classroom:</p>
+<form id='courseForm' onsubmit='submitCourses(this)'>
+  <? var optionalArgs = {
+    teacherId: 'me',
+    courseStates: 'ACTIVE'
+  };
+  var response = Classroom.Courses.list(optionalArgs);
+  var courses = response.courses; 
+  for (var i = 0; i < courses.length; i++) { ?>
+    <input type="checkbox" name="<?=courses[i].id?>" value="true">
+    <label for="<?=courses[i].id?>"><?=courses[i].name?></label><br>
+  <? } ?>
+  <input type="button" value="Submit">
+</form>
+<input type="button" value="Cancel" onclick="google.script.host.close()">
+</body>
+
+<script>
+  function preventFormSubmit() {
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+      forms[i].addEventListener('submit', function(event) {
+        event.preventDefault();
+      });
+    }
+  }
+  window.addEventListener('load', preventFormSubmit);
+  
+  function submitCourses(formObject) {
+    google.script.run.processCourseSelections(formObject);
+    google.script.host.close();
+  }
+</script>
